@@ -1,5 +1,6 @@
 import dateutil.parser
 import json
+import os
 import subprocess as sp
 
 from sqlalchemy import inspect as sqlalchemy_inspect
@@ -136,6 +137,9 @@ class DRM_K8S_Jobs(DRM):  # noqa
         job_id = task.drm_jobID
 
         stream_logs_cmd = 'klogs {job_id}'.format(job_id=job_id)
+        output_dir = os.path.dirname(task.output_stdout_path)
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
 
         sp.call(stream_logs_cmd,
                  stdout=open(task.output_stdout_path, 'w'),
